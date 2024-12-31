@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>手机检测测试</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>手机检测测试</h1>
+        <div class="camera">
+            <video id="video" autoplay playsinline></video>
+            <canvas id="canvas" style="display:none;"></canvas>
+        </div>
+        <div class="test-controls">
+            <button id="startTest">开始测试</button>
+            <button id="resetTest">重置测试</button>
+        </div>
+        <div class="test-results">
+            <p>测试次数: <span id="testCount">0</span></p>
+            <p>检测到手机次数: <span id="phoneDetectedCount">0</span></p>
+            <p>准确率: <span id="accuracy">0%</span></p>
+        </div>
+        <div class="detection">
+            <p id="status">准备测试...</p>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/mobilenet"></script>
+    <script src="test.js"></script>
+</body>
+</html>

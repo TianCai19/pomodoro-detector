@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>手机检测测试 - 静态图片</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>手机检测测试 - 静态图片</h1>
+        <div class="test-images">
+            <div class="image-container">
+                <img id="image1" src="phone1.jpg" alt="测试图片1">
+                <canvas id="canvas1"></canvas>
+                <p id="result1">等待检测...</p>
+            </div>
+            <div class="image-container">
+                <img id="image2" src="phone2.jpg" alt="测试图片2">
+                <canvas id="canvas2"></canvas>
+                <p id="result2">等待检测...</p>
+            </div>
+        </div>
+        <button id="startTest">开始测试</button>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/mobilenet"></script>
+    <script src="test-images.js"></script>
+</body>
+</html>
