@@ -9,6 +9,7 @@ const resetButton = document.getElementById('reset');
 const video = document.getElementById('video');
 const canvas = document.getElementById('canvas');
 const statusText = document.getElementById('status');
+const cameraSelect = document.getElementById('cameraSelect');
 let model;
 let isPhoneDetected = false;
 let phoneDetectionCount = 0;
@@ -75,26 +76,18 @@ async function initCamera() {
             throw new Error('未检测到摄像头设备');
         }
 
+        // 填充摄像头选择下拉菜单
+        cameraSelect.innerHTML = videoDevices.map((device, index) => 
+            `<option value="${device.deviceId}">${device.label || `摄像头 ${index + 1}`}</option>`
+        ).join('');
+
         // 获取摄像头权限
-        const constraints = {
-            video: {
-                width: { ideal: 1280 },
-                height: { ideal: 720 },
-                facingMode: 'user' // 优先使用前置摄像头
-            }
-        };
-        
-        const stream = await navigator.mediaDevices.getUserMedia(constraints);
-        video.srcObject = stream;
-        
-        // 等待视频加载
-        await new Promise((resolve) => {
-            video.onloadedmetadata = () => {
-                video.play();
-                resolve();
-            };
+        await startCamera(videoDevices[0].deviceId);
+
+        cameraSelect.addEventListener('change', (event) => {
+            startCamera(event.target.value);
         });
-        
+
         statusText.textContent = '摄像头已启动';
     } catch (error) {
         statusText.textContent = `无法访问摄像头: ${error.message}`;
@@ -110,6 +103,29 @@ async function initCamera() {
             console.log('摄像头设备可能已被其他应用程序占用');
         }
     }
+}
+
+// 启动指定摄像头
+async function startCamera(deviceId) {
+    const constraints = {
+        video: {
+            deviceId: deviceId,
+            width: { ideal: 1280 },
+            height: { ideal: 720 },
+            facingMode: 'user' // 优先使用前置摄像头
+        }
+    };
+    
+    const stream = await navigator.mediaDevices.getUserMedia(constraints);
+    video.srcObject = stream;
+    
+    // 等待视频加载
+    await new Promise((resolve) => {
+        video.onloadedmetadata = () => {
+            video.play();
+            resolve();
+        };
+    });
 }
 
 // 加载COCO-SSD模型
