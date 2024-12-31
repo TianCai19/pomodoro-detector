@@ -153,6 +153,84 @@ video {
     100% { transform: scale(1); }
 }
 
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.icon-button {
+    background: transparent;
+    border: none;
+    padding: 8px;
+    min-width: auto;
+    border-radius: 50%;
+    margin: 0;
+    opacity: 0.6;
+    transition: all 0.3s ease;
+}
+
+.icon-button:hover {
+    background: rgba(0, 0, 0, 0.1);
+    transform: rotate(180deg);
+}
+
+.icon-button svg {
+    fill: var(--text-color);
+}
+
+.icon-button:disabled {
+    opacity: 0.3;
+}
+
+#status-indicator {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin: 10px auto;
+    background: var(--text-color);
+    transition: all 0.3s ease;
+}
+
+#status-indicator.running {
+    background: var(--success-color);
+    animation: pulse 2s infinite;
+}
+
+#status-indicator.paused {
+    background: var(--warning-color);
+}
+
+#status-indicator.detected {
+    background: var(--danger-color);
+    animation: flash 1s infinite;
+}
+
+.status-text {
+    font-size: 0.9rem;
+    opacity: 0.8;
+    text-align: center;
+    margin: 10px 0;
+    transition: opacity 0.3s ease;
+}
+
+.status-text.hide {
+    opacity: 0;
+}
+
+#mainButton {
+    width: 200px;
+    height: 50px;
+    font-size: 1.2rem;
+    margin: 20px auto;
+    display: block;
+}
+
+#mainButton.warning {
+    background: var(--warning-color);
+}
+
 /* 响应式设计 */
 @media (max-width: 768px) {
     #timer {

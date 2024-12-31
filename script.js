@@ -15,6 +15,8 @@ class App {
             reset: document.getElementById('resetButton')
         };
         this.status = document.getElementById('status');
+        this.statusIndicator = document.getElementById('status-indicator');
+        this.phoneDetectionTimeout = null;
         
         this.initializeEventListeners();
         this.updateState('initial');
@@ -23,39 +25,43 @@ class App {
     updateState(state) {
         const states = {
             initial: {
-                mainButton: { text: '开始', class: 'primary', disabled: false },
+                mainButton: { text: '开始专注', class: 'primary' },
                 resetButton: { disabled: true },
-                status: '准备开始...'
+                status: '准备开始...',
+                indicator: ''
             },
             running: {
-                mainButton: { text: '暂停', class: 'warning', disabled: false },
+                mainButton: { text: '暂停', class: 'warning' },
                 resetButton: { disabled: false },
-                status: '专注中...'
+                status: '专注中...',
+                indicator: 'running'
             },
             paused: {
-                mainButton: { text: '继续', class: 'success', disabled: false },
+                mainButton: { text: '继续', class: 'primary' },
                 resetButton: { disabled: false },
-                status: '已暂停'
+                status: '已暂停',
+                indicator: 'paused'
             },
             completed: {
-                mainButton: { text: '重新开始', class: 'primary', disabled: false },
+                mainButton: { text: '重新开始', class: 'primary' },
                 resetButton: { disabled: true },
-                status: '已完成！'
+                status: '已完成！',
+                indicator: ''
             }
         };
 
         const currentState = states[state];
         if (!currentState) return;
 
-        // 更新主按钮
+        // 更新按钮和状态
         this.buttons.main.textContent = currentState.mainButton.text;
         this.buttons.main.className = currentState.mainButton.class;
-        this.buttons.main.disabled = currentState.mainButton.disabled;
-
-        // 更新重置按钮
         this.buttons.reset.disabled = currentState.resetButton.disabled;
-
-        // 更新状态显示
+        
+        // 更新状态指示器
+        this.statusIndicator.className = currentState.indicator;
+        
+        // 只在非检测状态更新状态文本
         if (!this.status.classList.contains('detected')) {
             this.status.textContent = currentState.status;
         }
@@ -92,11 +98,15 @@ class App {
     }
 
     resetTimer() {
+        if (this.phoneDetectionTimeout) {
+            clearTimeout(this.phoneDetectionTimeout);
+        }
+        
         this.timer.reset();
         this.detector.reset();
-        const status = document.getElementById('status');
-        status.textContent = '正在检测手机使用...';
-        status.classList.remove('detected');
+        this.status.classList.remove('detected');
+        this.statusIndicator.className = '';
+        this.updateState('initial');
     }
 
     updateTimerDisplay(time) {
@@ -110,13 +120,34 @@ class App {
     }
 
     handlePhoneDetection(data) {
-        this.status.textContent = `检测到手机使用！(第 ${data.count} 次)`;
+        // 清除之前的超时
+        if (this.phoneDetectionTimeout) {
+            clearTimeout(this.phoneDetectionTimeout);
+        }
+
+        this.status.textContent = `检测到手机使用！`;
         this.status.classList.add('detected');
+        this.statusIndicator.classList.add('detected');
         
         if (this.timer.isRunning && !this.timer.isPaused) {
             this.timer.pause();
             this.updateState('paused');
         }
+
+        // 3秒后恢复状态显示
+        this.phoneDetectionTimeout = setTimeout(() => {
+            this.status.classList.remove('detected');
+            this.statusIndicator.classList.remove('detected');
+            
+            // 更新状态文本
+            if (this.timer.isRunning) {
+                if (this.timer.isPaused) {
+                    this.status.textContent = '已暂停';
+                } else {
+                    this.status.textContent = '专注中...';
+                }
+            }
+        }, 3000);
     }
 
     handleError(error) {
