@@ -6,6 +6,7 @@ export class PomodoroTimer extends EventEmitter {
         super();
         this.timeLeft = CONFIG.timer.defaultDuration;
         this.isRunning = false;
+        this.isPaused = false;
         this.interval = null;
     }
 
@@ -13,24 +14,47 @@ export class PomodoroTimer extends EventEmitter {
         if (this.isRunning) return;
         
         this.isRunning = true;
+        this.isPaused = false;
+        this._startInterval();
+        this.emit('start');
+    }
+
+    pause() {
+        if (!this.isRunning || this.isPaused) return;
+        
+        clearInterval(this.interval);
+        this.isPaused = true;
+        this.emit('pause');
+    }
+
+    resume() {
+        if (!this.isRunning || !this.isPaused) return;
+        
+        this.isPaused = false;
+        this._startInterval();
+        this.emit('resume');
+    }
+
+    _startInterval() {
         this.interval = setInterval(() => {
             this.timeLeft--;
             this.emit('tick', this.getTimeString());
             
             if (this.timeLeft <= 0) {
-                this.stop();
-                this.emit('complete');
+                this.complete();
             }
         }, 1000);
-        
-        this.emit('start');
+    }
+
+    complete() {
+        this.stop();
+        this.emit('complete');
     }
 
     stop() {
-        if (!this.isRunning) return;
-        
         clearInterval(this.interval);
         this.isRunning = false;
+        this.isPaused = false;
         this.emit('stop');
     }
 

@@ -9,6 +9,8 @@ export class PhoneDetector extends EventEmitter {
         this.model = null;
         this.isDetecting = false;
         this.detectionCount = 0;
+        this.lastDetectionTime = 0;
+        this.detectionCooldown = 3000; // 3秒冷却时间
     }
 
     async init() {
@@ -54,6 +56,12 @@ export class PhoneDetector extends EventEmitter {
         if (!this.isDetecting) return;
 
         try {
+            const now = Date.now();
+            if (now - this.lastDetectionTime < this.detectionCooldown) {
+                requestAnimationFrame(() => this.detect());
+                return;
+            }
+
             this.canvas.width = this.video.videoWidth;
             this.canvas.height = this.video.videoHeight;
             const ctx = this.canvas.getContext('2d');
@@ -66,6 +74,7 @@ export class PhoneDetector extends EventEmitter {
             );
 
             if (phoneDetected) {
+                this.lastDetectionTime = now;
                 this.detectionCount++;
                 this.emit('phoneDetected', {
                     count: this.detectionCount,
