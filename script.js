@@ -167,9 +167,65 @@ class App {
         }, 3000);
     }
 
+    async initCamera() {
+        try {
+            // 检查是否支持媒体设备
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                throw new Error('浏览器不支持摄像头访问');
+            }
+            const cameraSelect = document.getElementById('cameraSelect');
+            // 获取可用设备
+            const devices = await navigator.mediaDevices.enumerateDevices();
+            const videoDevices = devices.filter(device => device.kind === 'videoinput');
+            if (videoDevices.length === 0) {
+                throw new Error('未检测到摄像头设备');
+            }
+            // 填充摄像头选择下拉菜单
+            cameraSelect.innerHTML = videoDevices.map((device, index) =>
+                `<option value="${device.deviceId}">${device.label || `摄像头 ${index + 1}`}</option>`
+            ).join('');
+            // 启动默认摄像头
+            await this.startCamera(videoDevices[0].deviceId);
+            cameraSelect.addEventListener('change', async (event) => {
+                // 切换时先停止检测，重新启动
+                this.detector.stop();
+                await this.startCamera(event.target.value);
+                this.detector.startDetection();
+            });
+            this.status.textContent = '摄像头已启动';
+        } catch (error) {
+            this.status.textContent = `无法访问摄像头: ${error.message}`;
+            this.status.style.color = 'red';
+            console.error('摄像头访问错误:', error);
+        }
+    }
+
+    async startCamera(deviceId) {
+        const video = document.getElementById('video');
+        const constraints = {
+            video: {
+                deviceId: deviceId,
+                width: { ideal: 1280 },
+                height: { ideal: 720 },
+                facingMode: 'user'
+            }
+        };
+        const stream = await navigator.mediaDevices.getUserMedia(constraints);
+        video.srcObject = stream;
+        await new Promise(resolve => {
+            video.onloadedmetadata = () => {
+                video.play();
+                resolve();
+            };
+        });
+    }
+
     async start() {
         try {
             await this.detector.init();
+            // 初始化摄像头
+            await this.initCamera();
+            // 开始检测
             await this.detector.startDetection();
         } catch (error) {
             this.handleError(error);
