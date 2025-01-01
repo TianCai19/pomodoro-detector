@@ -9,19 +9,34 @@
 - 手机使用次数统计
 - 检测到手机时自动暂停计时
 - 响应式界面设计
-
 ## 使用方法
 
 1. 克隆本仓库
 2. 打开终端，进入项目目录
 3. 运行本地服务器：
-   ```bash
-   python3 -m http.server 8000
-   ```
+    ```bash
+    python3 -m http.server 8000
+    ```
 4. 在浏览器中访问 `http://localhost:8000`
 5. 允许访问摄像头
 6. 点击"开始"按钮启动番茄钟
 7. 当检测到手机使用时，计时器会自动暂停并记录使用次数
+
+### 使用 ngrok 进行外网访问
+
+1. 安装 ngrok：
+     - macOS:
+        ```bash
+        brew install ngrok
+        ```
+     - Windows:
+        下载并安装 ngrok 客户端，详见 [ngrok 官方网站](https://ngrok.com/download)
+2. 启动 ngrok：
+     ```bash
+     ngrok http 8000
+     ```
+3. 复制生成的外网访问地址，在浏览器中访问
+
 
 ## 技术栈
 
