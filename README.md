@@ -33,13 +33,15 @@
 
 ```
 pomodoro-detector/
-├── index.html          # 主页面
-├── style.css           # 样式文件
-├── script.js           # 主逻辑
-├── README.md           # 项目说明
-└── assets/             # 静态资源
-    ├── phone1.jpg
-    └── phone2.jpeg
+├── index.html               # 主页面，包含应用的UI
+├── style.css                # 样式表，负责应用的视觉设计
+├── script.js                # 主逻辑，控制番茄钟功能和检测流程
+├── README.md                # 项目说明
+├── js/
+│   ├── config.js            # 配置文件，用于存储应用配置
+│   ├── EventEmitter.js      # 事件系统，用于触发和监听应用事件
+│   ├── PhoneDetector.js     # 手机检测逻辑，调用ML模型进行实时检测
+│   └── PomodoroTimer.js     # 番茄钟定时器，管理计时与状态切换
 ```
 
 ## 许可证
