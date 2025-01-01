@@ -270,3 +270,17 @@ video {
         font-size: 2rem;
     }
 }
+
+.split-container {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.pomodoro-container,
+.detection-container {
+    flex: 1;
+    box-sizing: border-box;
+}
